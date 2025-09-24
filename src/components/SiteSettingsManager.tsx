@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Save, Upload, X } from 'lucide-react';
-import { useSiteSettings } from '../hooks/useSiteSettings';
+import { useSiteSettingsContext } from '../contexts/SiteSettingsContext';
 import { useImageUpload } from '../hooks/useImageUpload';
 
 const SiteSettingsManager: React.FC = () => {
-  const { siteSettings, loading, updateSiteSettings } = useSiteSettings();
+  const { siteSettings, loading, updateSiteSettings } = useSiteSettingsContext();
   const { uploadImage, uploading } = useImageUpload();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -54,10 +54,33 @@ const SiteSettingsManager: React.FC = () => {
       
       // Upload new logo if selected
       if (logoFile) {
-        const uploadedUrl = await uploadImage(logoFile, 'site-logo');
-        logoUrl = uploadedUrl;
+        console.log('=== STARTING LOGO UPLOAD ===');
+        console.log('File details:', {
+          name: logoFile.name,
+          size: logoFile.size,
+          type: logoFile.type,
+          lastModified: logoFile.lastModified
+        });
+        
+        try {
+          const uploadedUrl = await uploadImage(logoFile);
+          console.log('✅ Logo uploaded successfully:', uploadedUrl);
+          logoUrl = uploadedUrl;
+        } catch (uploadError) {
+          console.error('❌ Upload failed:', uploadError);
+          throw new Error(`Upload failed: ${uploadError instanceof Error ? uploadError.message : 'Unknown upload error'}`);
+        }
       }
 
+      console.log('=== UPDATING SITE SETTINGS ===');
+      console.log('Settings to update:', {
+        site_name: formData.site_name,
+        site_description: formData.site_description,
+        currency: formData.currency,
+        currency_code: formData.currency_code,
+        site_logo: logoUrl
+      });
+      
       // Update all settings
       await updateSiteSettings({
         site_name: formData.site_name,
@@ -67,10 +90,14 @@ const SiteSettingsManager: React.FC = () => {
         site_logo: logoUrl
       });
 
+      console.log('✅ Site settings updated successfully');
+      alert('✅ Site settings saved successfully!');
       setIsEditing(false);
       setLogoFile(null);
     } catch (error) {
-      console.error('Error saving site settings:', error);
+      console.error('❌ Error saving site settings:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert(`❌ Error saving site settings:\n\n${errorMessage}\n\nCheck the browser console for more details.`);
     }
   };
 
@@ -87,6 +114,8 @@ const SiteSettingsManager: React.FC = () => {
     setIsEditing(false);
     setLogoFile(null);
   };
+
+  // (Test storage/upload helpers removed)
 
   if (loading) {
     return (
@@ -170,6 +199,7 @@ const SiteSettingsManager: React.FC = () => {
                   <Upload className="h-4 w-4" />
                   <span>Upload Logo</span>
                 </label>
+                
               </div>
             )}
           </div>

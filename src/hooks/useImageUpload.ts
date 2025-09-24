@@ -38,6 +38,9 @@ export const useImageUpload = () => {
       }, 100);
 
       // Upload to Supabase Storage
+      console.log('Uploading to Supabase storage bucket: menu-images');
+      console.log('File details:', { fileName, fileType: file.type, fileSize: file.size });
+      
       const { data, error } = await supabase.storage
         .from('menu-images')
         .upload(fileName, file, {
@@ -50,8 +53,11 @@ export const useImageUpload = () => {
       setUploadProgress(100);
 
       if (error) {
-        throw error;
+        console.error('Supabase storage upload error:', error);
+        throw new Error(`Upload failed: ${error.message}`);
       }
+
+      console.log('File uploaded successfully:', data);
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage

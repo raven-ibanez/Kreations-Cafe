@@ -8,7 +8,9 @@ import Cart from './components/Cart';
 import Checkout from './components/Checkout';
 import FloatingCartButton from './components/FloatingCartButton';
 import AdminDashboard from './components/AdminDashboard';
+import DynamicFavicon from './components/DynamicFavicon';
 import { useMenu } from './hooks/useMenu';
+import { SiteSettingsProvider } from './contexts/SiteSettingsContext';
 
 function MainApp() {
   const cart = useCart();
@@ -30,7 +32,7 @@ function MainApp() {
     : menuItems.filter(item => item.category === selectedCategory);
 
   return (
-    <div className="min-h-screen bg-cream-50 font-inter">
+    <div className="min-h-screen bg-coffee-cream font-inter">
       <Header 
         cartItemsCount={cart.getTotalItems()}
         onCartClick={() => handleViewChange('cart')}
@@ -79,12 +81,15 @@ function MainApp() {
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<MainApp />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-      </Routes>
-    </Router>
+    <SiteSettingsProvider>
+      <DynamicFavicon />
+      <Router>
+        <Routes>
+          <Route path="/" element={<MainApp />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+        </Routes>
+      </Router>
+    </SiteSettingsProvider>
   );
 }
 

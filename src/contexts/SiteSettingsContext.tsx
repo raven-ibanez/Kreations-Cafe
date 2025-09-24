@@ -1,8 +1,30 @@
-import { useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '../lib/supabase';
 import { SiteSettings, SiteSetting } from '../types';
 
-export const useSiteSettings = () => {
+interface SiteSettingsContextType {
+  siteSettings: SiteSettings | null;
+  loading: boolean;
+  error: string | null;
+  updateSiteSettings: (updates: Partial<SiteSettings>) => Promise<void>;
+  refetch: () => Promise<void>;
+}
+
+const SiteSettingsContext = createContext<SiteSettingsContextType | undefined>(undefined);
+
+export const useSiteSettingsContext = () => {
+  const context = useContext(SiteSettingsContext);
+  if (!context) {
+    throw new Error('useSiteSettingsContext must be used within a SiteSettingsProvider');
+  }
+  return context;
+};
+
+interface SiteSettingsProviderProps {
+  children: ReactNode;
+}
+
+export const SiteSettingsProvider: React.FC<SiteSettingsProviderProps> = ({ children }) => {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,26 +59,6 @@ export const useSiteSettings = () => {
     }
   };
 
-  const updateSiteSetting = async (id: string, value: string) => {
-    try {
-      setError(null);
-
-      const { error } = await supabase
-        .from('site_settings')
-        .update({ value })
-        .eq('id', id);
-
-      if (error) throw error;
-
-      // Refresh the settings
-      await fetchSiteSettings();
-    } catch (err) {
-      console.error('Error updating site setting:', err);
-      setError(err instanceof Error ? err.message : 'Failed to update site setting');
-      throw err;
-    }
-  };
-
   const updateSiteSettings = async (updates: Partial<SiteSettings>) => {
     try {
       setError(null);
@@ -76,13 +78,11 @@ export const useSiteSettings = () => {
         throw new Error('Some updates failed');
       }
 
-      // Refresh the settings
-      await fetchSiteSettings();
+      // Update local state immediately for better UX
+      setSiteSettings(prev => prev ? { ...prev, ...updates } : null);
       
-      // Force a small delay to ensure database consistency
-      setTimeout(() => {
-        fetchSiteSettings();
-      }, 100);
+      // Refresh from database to ensure consistency
+      await fetchSiteSettings();
     } catch (err) {
       console.error('Error updating site settings:', err);
       setError(err instanceof Error ? err.message : 'Failed to update site settings');
@@ -94,12 +94,17 @@ export const useSiteSettings = () => {
     fetchSiteSettings();
   }, []);
 
-  return {
+  const value: SiteSettingsContextType = {
     siteSettings,
     loading,
     error,
-    updateSiteSetting,
     updateSiteSettings,
     refetch: fetchSiteSettings
   };
+
+  return (
+    <SiteSettingsContext.Provider value={value}>
+      {children}
+    </SiteSettingsContext.Provider>
+  );
 };
