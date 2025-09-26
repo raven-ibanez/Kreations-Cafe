@@ -93,14 +93,14 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({
 
   return (
     <>
-      <div className={`bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group animate-scale-in border border-gray-100 ${!item.available ? 'opacity-60' : ''}`}>
-        {/* Image Container with Badges */}
-        <div className="relative h-48 bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className={`menu-item-card bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden group animate-scale-in border border-gray-100 hover:border-coffee-latte ${!item.available ? 'opacity-60' : ''}`}>
+        {/* Image Container with Square Proportions */}
+        <div className="relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
           {item.image ? (
             <img
               src={item.image}
               alt={item.name}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               loading="lazy"
               decoding="async"
               onError={(e) => {
@@ -113,8 +113,11 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({
             <div className="text-6xl opacity-20 text-gray-400">☕</div>
           </div>
           
+          {/* Overlay gradient for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
+          
           {/* Badges */}
-          <div className="absolute top-3 left-3 flex flex-col gap-2">
+          <div className="absolute top-4 left-4 flex flex-col gap-2">
             {item.isOnDiscount && item.discountPrice && (
               <div className="bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg animate-pulse">
                 SALE
@@ -128,59 +131,59 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({
           </div>
           
           {!item.available && (
-            <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+            <div className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
               UNAVAILABLE
             </div>
           )}
           
           {/* Discount Percentage Badge */}
           {item.isOnDiscount && item.discountPrice && (
-            <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm text-red-600 text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+            <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm text-red-600 text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
               {Math.round(((item.basePrice - item.discountPrice) / item.basePrice) * 100)}% OFF
             </div>
           )}
         </div>
         
         {/* Content */}
-        <div className="p-5">
-          <div className="flex items-start justify-between mb-3">
-            <h4 className="text-lg font-semibold text-gray-900 leading-tight flex-1 pr-2">{item.name}</h4>
+        <div className="p-6">
+          <div className="flex items-start justify-between mb-4">
+            <h4 className="text-xl font-bold text-gray-900 leading-tight flex-1 pr-3">{item.name}</h4>
             {item.variations && item.variations.length > 0 && (
-              <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full whitespace-nowrap">
+              <div className="text-xs text-coffee-brown bg-coffee-cream px-3 py-1.5 rounded-full whitespace-nowrap font-medium">
                 {item.variations.length} sizes
               </div>
             )}
           </div>
           
-          <p className={`text-sm mb-4 leading-relaxed ${!item.available ? 'text-gray-400' : 'text-gray-600'}`}>
+          <p className={`text-sm mb-6 leading-relaxed ${!item.available ? 'text-gray-400' : 'text-gray-600'}`}>
             {!item.available ? 'Currently Unavailable' : item.description}
           </p>
           
           {/* Pricing Section */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-6">
             <div className="flex-1">
               {item.isOnDiscount && item.discountPrice ? (
-                <div className="space-y-1">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-2xl font-bold text-red-600">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-3xl font-bold text-red-600">
                       ₱{item.discountPrice.toFixed(2)}
                     </span>
-                    <span className="text-sm text-gray-500 line-through">
+                    <span className="text-lg text-gray-500 line-through">
                       ₱{item.basePrice.toFixed(2)}
                     </span>
                   </div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-sm text-green-600 font-medium">
                     Save ₱{(item.basePrice - item.discountPrice).toFixed(2)}
                   </div>
                 </div>
               ) : (
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-3xl font-bold text-gray-900">
                   ₱{item.basePrice.toFixed(2)}
                 </div>
               )}
               
               {item.variations && item.variations.length > 0 && (
-                <div className="text-xs text-gray-500 mt-1">
+                <div className="text-sm text-gray-500 mt-2">
                   Starting price
                 </div>
               )}
@@ -191,29 +194,29 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({
               {!item.available ? (
                 <button
                   disabled
-                  className="bg-gray-200 text-gray-500 px-4 py-2.5 rounded-xl cursor-not-allowed font-medium text-sm"
+                  className="bg-gray-200 text-gray-500 px-6 py-3 rounded-2xl cursor-not-allowed font-medium text-sm"
                 >
                   Unavailable
                 </button>
               ) : quantity === 0 ? (
                 <button
                   onClick={handleAddToCart}
-                  className="bg-gradient-to-r from-coffee-brown to-coffee-espresso text-white px-6 py-2.5 rounded-xl hover:from-coffee-espresso hover:to-coffee-charcoal transition-all duration-200 transform hover:scale-105 font-medium text-sm shadow-lg hover:shadow-xl"
+                  className="bg-gradient-to-r from-coffee-brown to-coffee-espresso text-white px-8 py-3 rounded-2xl hover:from-coffee-espresso hover:to-coffee-charcoal transition-all duration-300 transform hover:scale-105 font-semibold text-sm shadow-lg hover:shadow-xl"
                 >
                   {item.variations?.length || item.addOns?.length ? 'Customize' : 'Add to Cart'}
                 </button>
               ) : (
-                <div className="flex items-center space-x-2 bg-gradient-to-r from-coffee-cream to-coffee-beige rounded-xl p-1 border border-coffee-latte">
+                <div className="flex items-center space-x-2 bg-gradient-to-r from-coffee-cream to-coffee-beige rounded-2xl p-1.5 border border-coffee-latte">
                   <button
                     onClick={handleDecrement}
-                    className="p-2 hover:bg-coffee-latte rounded-lg transition-colors duration-200 hover:scale-110"
+                    className="p-2.5 hover:bg-coffee-latte rounded-xl transition-colors duration-200 hover:scale-110"
                   >
                     <Minus className="h-4 w-4 text-gray-700" />
                   </button>
-                  <span className="font-bold text-gray-900 min-w-[28px] text-center text-sm">{quantity}</span>
+                  <span className="font-bold text-gray-900 min-w-[32px] text-center text-lg">{quantity}</span>
                   <button
                     onClick={handleIncrement}
-                    className="p-2 hover:bg-coffee-latte rounded-lg transition-colors duration-200 hover:scale-110"
+                    className="p-2.5 hover:bg-coffee-latte rounded-xl transition-colors duration-200 hover:scale-110"
                   >
                     <Plus className="h-4 w-4 text-gray-700" />
                   </button>
@@ -224,7 +227,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({
 
           {/* Add-ons indicator */}
           {item.addOns && item.addOns.length > 0 && (
-            <div className="flex items-center space-x-1 text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-lg">
+            <div className="flex items-center space-x-2 text-sm text-coffee-brown bg-coffee-cream px-4 py-2 rounded-xl font-medium">
               <span>+</span>
               <span>{item.addOns.length} add-on{item.addOns.length > 1 ? 's' : ''} available</span>
             </div>

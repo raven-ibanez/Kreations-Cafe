@@ -33,3 +33,5 @@ const DynamicFavicon: React.FC = () => {
 };
 
 export default DynamicFavicon;
+
+

@@ -257,3 +257,5 @@ INSERT INTO add_ons (menu_item_id, name, price, category) VALUES
   ((SELECT id FROM menu_items WHERE name = 'Carbonara'), 'Fried Onions', 10, 'Extras'),
   ((SELECT id FROM menu_items WHERE name = 'Spaghetti'), 'Fried Garlic', 10, 'Extras'),
   ((SELECT id FROM menu_items WHERE name = 'Spaghetti'), 'Fried Onions', 10, 'Extras');
+
+
